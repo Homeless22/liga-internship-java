@@ -4,6 +4,7 @@ import java.util.*;
 
 public class CurrRateForecaster {
 
+    //todo лучше вынести в отдельный класс
      class CurrRateComparator implements Comparator<CurrRate> {
           public int compare(CurrRate r1, CurrRate r2){
                return r1.rateDate.compareTo(r2.rateDate) * -1;
@@ -15,6 +16,7 @@ public class CurrRateForecaster {
           for (CurrRate r:histCurrRates){
                sumRates += r.rate/r.nominal;
           }
+          //todo не хватает пробелов, попробуй форматирование кода, в идее это ctrl+alt+L
           return (sumRates==0.0)?sumRates:(sumRates/histCurrRates.size());
      }
 
@@ -45,8 +47,10 @@ public class CurrRateForecaster {
      * @return Список прогнозируемых курсов
      */
     public List<CurrRate> getForecastCurrRates(List<CurrRate> histCurrRates, String period, Date refDate){
+        //todo переменная нигде не используется
           int counter = 1;
           List<CurrRate> forecastRates = new LinkedList<CurrRate>();
+          //todo можно заменить конструктором - new LinkedList<>(histCurrRates);
           List<CurrRate> histRates = new LinkedList<CurrRate>();
           histRates.addAll(histCurrRates);
 
@@ -66,6 +70,7 @@ public class CurrRateForecaster {
                //следущая прогнозная дата
                forecastDate = nextDate(forecastDate);
           }
+           //todo а зачем ты здесь список чистишь, он же больше неиспользуется, лишняя операция
           histRates.clear();
 
           return forecastRates;

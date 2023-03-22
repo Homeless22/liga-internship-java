@@ -7,6 +7,8 @@ import java.util.Scanner;
 
 public class CurrRateApp {
     //количество последних курсов, которые используются для прогнозирования
+    //todo всегда надо ставить модификатор доступа для поля (private)
+    //todo названия констант всегда пишутся заглавными буквами snake_case (MAX_NUM_RECENT_RATES)
     final static int maxNumRecentRates = 7;
 
 
@@ -34,7 +36,10 @@ public class CurrRateApp {
             String period = cmdLineParser.getOptionValue("period");
 
             //загрузка исторических курсов валют из файла на текущую дату
+            //todo тут ты создаешь объект класса, чтоб вызвать у него один метод, попробуй сделать метод loadRatesFromFile статическим
             CurrRatesReader currRatesReader = new CurrRatesReader();
+            //todo можно не прописывать здесь переменную, а сразу написать new Date() в параметрах метода loadRatesFromFile
+            // будет компактнее
             Date currentDate = new Date();
             List<CurrRate> histCurrRates = currRatesReader.loadRatesFromFile(currency, currentDate, maxNumRecentRates);
             if (histCurrRates.size() == 0 ){
@@ -42,8 +47,10 @@ public class CurrRateApp {
                 return;
             }
             //прогноз курса валют на основе списка исторических курсов
+            //todo тут ты создаешь объект класса, чтоб вызвать у него один метод, попробуй сделать метод getForecastCurrRates статическим
             CurrRateForecaster forecaster = new CurrRateForecaster();
             List<CurrRate> forecastRates = forecaster.getForecastCurrRates(histCurrRates, period, currentDate);
+            //todo после использования списка не нужно его чистить, лишняя операция
             histCurrRates.clear();
 
             //вывод курсов
