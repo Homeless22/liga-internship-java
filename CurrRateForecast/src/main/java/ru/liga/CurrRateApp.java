@@ -49,7 +49,7 @@ public class CurrRateApp {
             //прогноз курса валют на основе списка исторических курсов
             //todo тут ты создаешь объект класса, чтоб вызвать у него один метод, попробуй сделать метод getForecastCurrRates статическим
             CurrRateForecaster forecaster = new CurrRateForecaster();
-            List<CurrRate> forecastRates = forecaster.getForecastCurrRates(histCurrRates, period, currentDate);
+            List<CurrRate> forecastRates = forecaster.getForecastCurrRates(histCurrRates, period, currentDate, maxNumRecentRates);
             //todo после использования списка не нужно его чистить, лишняя операция
             histCurrRates.clear();
 
