@@ -1,0 +1,7 @@
+ru\liga\CurrRateForecaster$CurrRateComparator.class
+ru\liga\CurrRateApp.class
+ru\liga\CurrRatesReader.class
+ru\liga\CmdLineParser.class
+ru\liga\CurrRatesReader$CSVRecordComparator.class
+ru\liga\CurrRateForecaster.class
+ru\liga\CurrRate.class
