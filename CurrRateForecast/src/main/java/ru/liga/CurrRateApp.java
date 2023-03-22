@@ -43,7 +43,7 @@ public class CurrRateApp {
             }
             //прогноз курса валют на основе списка исторических курсов
             CurrRateForecaster forecaster = new CurrRateForecaster();
-            List<CurrRate> forecastRates = forecaster.getForecastCurrRates(histCurrRates, period, currentDate);
+            List<CurrRate> forecastRates = forecaster.getForecastCurrRates(histCurrRates, period, currentDate, maxNumRecentRates);
             histCurrRates.clear();
 
             //вывод курсов

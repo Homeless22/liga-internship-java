@@ -44,7 +44,7 @@ public class CurrRateForecaster {
      * @param refDate  Дата, от которой выполяется прогноз
      * @return Список прогнозируемых курсов
      */
-    public List<CurrRate> getForecastCurrRates(List<CurrRate> histCurrRates, String period, Date refDate){
+    public List<CurrRate> getForecastCurrRates(List<CurrRate> histCurrRates, String period, Date refDate, int maxNumRecentRates){
           int counter = 1;
           List<CurrRate> forecastRates = new LinkedList<CurrRate>();
           List<CurrRate> histRates = new LinkedList<CurrRate>();
@@ -60,9 +60,11 @@ public class CurrRateForecaster {
                //добавляем прогнозный курс в список с прогнозными курсами
                forecastRates.add(currRate);
                //удаляем самый ранний исторический курс из списка
-               histRates.remove(0);
+               if (histRates.size() >= maxNumRecentRates) {
+                   histRates.remove(histRates.size()-1);
+               }
                //добавляем прогнозный курс для следующего расчета
-               histRates.add(currRate);
+               histRates.add(0, currRate);
                //следущая прогнозная дата
                forecastDate = nextDate(forecastDate);
           }
