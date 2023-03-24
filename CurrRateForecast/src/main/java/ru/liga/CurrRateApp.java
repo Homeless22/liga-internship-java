@@ -6,16 +6,9 @@ import java.util.List;
 import java.util.Scanner;
 
 public class CurrRateApp {
+
     //количество последних курсов, которые используются для прогнозирования
-    final static int maxNumRecentRates = 7;
-
-
-    private static void printCurrRates(List<CurrRate> currRates){
-        SimpleDateFormat dtFormat = new SimpleDateFormat("EE dd.MM.yyyy");
-        for (CurrRate r:currRates){
-            System.out.println(dtFormat.format(r.rateDate)+" - "+String.format("%.2f", (double)Math.round(r.rate * 100)/100));
-        }
-    }
+    private final static int MAX_NUM_RECENT_RATES = 7;
 
     public static void main(String[] args){
         //Ввода данных из консоли
@@ -24,7 +17,7 @@ public class CurrRateApp {
         scanner.close();
 
         //Разбор команды
-        if (!cmdLineParser.parse()){
+        if (!cmdLineParser.parseAndValidate()){
             System.out.println("Неверный формат команды");
             return;
         }
@@ -34,21 +27,27 @@ public class CurrRateApp {
             String period = cmdLineParser.getOptionValue("period");
 
             //загрузка исторических курсов валют из файла на текущую дату
-            CurrRatesReader currRatesReader = new CurrRatesReader();
-            Date currentDate = new Date();
-            List<CurrRate> histCurrRates = currRatesReader.loadRatesFromFile(currency, currentDate, maxNumRecentRates);
+            List<CurrRate> histCurrRates = CurrRatesReader.loadRatesFromFile(currency, new Date(), MAX_NUM_RECENT_RATES);
             if (histCurrRates.size() == 0 ){
                 System.out.println("Курсы валют на текущую дату не найдены");
                 return;
             }
+
             //прогноз курса валют на основе списка исторических курсов
-            CurrRateForecaster forecaster = new CurrRateForecaster();
-            List<CurrRate> forecastRates = forecaster.getForecastCurrRates(histCurrRates, period, currentDate, maxNumRecentRates);
-            histCurrRates.clear();
+            List<CurrRate> forecastRates = CurrRateForecaster.getForecastCurrRates(histCurrRates, period, new Date(), MAX_NUM_RECENT_RATES);
 
             //вывод курсов
             printCurrRates(forecastRates);
-            forecastRates.clear();
+        }
+        else if ("exit".equals(cmdLineParser.getOptionValue("command"))){
+            System.exit(0);
+        }
+    }
+
+    private static void printCurrRates(List<CurrRate> currRates){
+        SimpleDateFormat dtFormat = new SimpleDateFormat("EE dd.MM.yyyy");
+        for (CurrRate r:currRates){
+            System.out.println(dtFormat.format(r.getRateDate())+" - "+String.format("%.2f", (double)Math.round(r.getRate() * 100)/100));
         }
     }
 }

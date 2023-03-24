@@ -7,12 +7,14 @@ import java.util.Map;
 анализатор коммандной строки
 */
 public class CmdLineParser {
+
     private String command;
     private Map<String, String> commandOptions;
+
     public CmdLineParser(String command)
     {
         this.command = command;
-        commandOptions = new HashMap<String, String>();
+        this.commandOptions = new HashMap<String, String>();
     }
 
     /**
@@ -20,12 +22,13 @@ public class CmdLineParser {
      *
      * @return Валидность команды
      */
-    public boolean parse() {
+    public boolean parseAndValidate() {
         boolean retVal = false;
 
         String[] options = command.replaceAll("[\\s]{2,}", " ").trim().split(" ");
+
         //проверка допустимости команды
-        if ("rate".equals(options[0].toLowerCase())) {
+        if ("rate".equalsIgnoreCase(options[0])) {
             retVal = true;
             commandOptions.put("command", "rate");
 
@@ -38,7 +41,7 @@ public class CmdLineParser {
             }
 
             //проверка заполнения параметра период прогнозирования
-            if ("tomorrow".equals(options[2].toLowerCase()) || "week".equals(options[2].toLowerCase())){
+            if ("tomorrow".equalsIgnoreCase(options[2]) || "week".equalsIgnoreCase(options[2])){
                 commandOptions.put("period", options[2].toLowerCase());
             }
             else {
@@ -55,11 +58,6 @@ public class CmdLineParser {
      * @return Значение параметра команды
      */
     public String getOptionValue(String optionName){
-        String retVal = null;
-
-        if (commandOptions.containsKey(optionName)) {
-            retVal = commandOptions.get(optionName);
-        }
-        return retVal;
+        return commandOptions.get(optionName);
     }
 }
