@@ -4,17 +4,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /*
-анализатор коммандной строки
+анализатор командной строки
 */
 public class CmdLineParser {
+    private final static String COMMAND_RATE = "rate";
 
-    private String command;
-    private Map<String, String> commandOptions;
+    private final String command;
+    private Map<CommandOption, String> options;
 
     public CmdLineParser(String command)
     {
         this.command = command;
-        this.commandOptions = new HashMap<String, String>();
+        this.options = new HashMap<>();
     }
 
     /**
@@ -25,28 +26,28 @@ public class CmdLineParser {
     public boolean parseAndValidate() {
         boolean retVal = false;
 
-        String[] options = command.replaceAll("[\\s]{2,}", " ").trim().split(" ");
+        String[] arrOptions = command.replaceAll("[\\s]{2,}", " ").trim().split(" ");
 
         //проверка допустимости команды
-        if ("rate".equalsIgnoreCase(options[0])) {
+        if (COMMAND_RATE.equalsIgnoreCase(arrOptions[0])) {
             retVal = true;
-            commandOptions.put("command", "rate");
+            options.put(CommandOption.COMMAND, COMMAND_RATE);
 
             //проверка заполнения параметры валюта
-            if (!"".equals(options[1])) {
-                commandOptions.put("currency", options[1]);
-            }
-            else {
+            if (!"".equals(arrOptions[1])) {
+                options.put(CommandOption.CURRENCY, arrOptions[1]);
+            } else {
                 retVal = false;
             }
 
             //проверка заполнения параметра период прогнозирования
-            if ("tomorrow".equalsIgnoreCase(options[2]) || "week".equalsIgnoreCase(options[2])){
-                commandOptions.put("period", options[2].toLowerCase());
+            for (ForecastPeriod p:ForecastPeriod.values()){
+                if (p.getPeriod().equalsIgnoreCase(arrOptions[2])){
+                    options.put(CommandOption.PERIOD, p.name());
+                    break;
+                }
             }
-            else {
-                retVal = false;
-            }
+            retVal = retVal && options.containsKey(CommandOption.PERIOD);
         }
         return retVal;
     }
@@ -54,10 +55,10 @@ public class CmdLineParser {
     /**
      * Получение параметра команды по имени
      *
-     * @param optionName Имя параметра команды
+     * @param option Имя параметра команды
      * @return Значение параметра команды
      */
-    public String getOptionValue(String optionName){
-        return commandOptions.get(optionName);
+    public String getOptionValue(CommandOption option){
+        return options.get(option);
     }
 }

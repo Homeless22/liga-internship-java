@@ -1,6 +1,9 @@
 package ru.liga;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public class CurrRateForecaster {
 
@@ -12,7 +15,7 @@ public class CurrRateForecaster {
      * @param refDate       Дата, от которой выполяется прогноз
      * @return Список прогнозируемых курсов
      */
-    public static List<CurrRate> getForecastCurrRates(List<CurrRate> histCurrRates, String period, Date refDate, int maxNumRecentRates) {
+    public static List<CurrRate> getForecastCurrRates(List<CurrRate> histCurrRates, ForecastPeriod period, Date refDate, int maxNumRecentRates) {
 
         List<CurrRate> forecastRates = new LinkedList<>();
         List<CurrRate> histRates = new LinkedList<>(histCurrRates);
@@ -23,7 +26,7 @@ public class CurrRateForecaster {
         //отбор предыдущих курсов на дату refDate
         Date forecastDate = nextDate(refDate);
 
-        int numForecatRates = getNumForecatRatesForPeriod(period);
+        int numForecatRates = period.getNumberOfDays();
 
         for (int i = 0; i < numForecatRates; i++) {
             CurrRate currRate = new CurrRate(1, getAvgRate(histRates), forecastDate, "");
@@ -59,13 +62,4 @@ public class CurrRateForecaster {
         return instance.getTime(); // получаем измененную дату
     }
 
-    private static int getNumForecatRatesForPeriod(String period) {
-        int retVal = 0;
-        if ("tomorrow".equals(period)) {
-            retVal = 1;
-        } else if ("week".equals(period)) {
-            retVal = 7;
-        }
-        return retVal;
-    }
 }

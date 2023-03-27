@@ -20,6 +20,8 @@ import java.util.List;
 */
 public class CurrRatesReader {
 
+    final private static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
+
     /**
      * Загрузка данных из файлв
      *
@@ -30,47 +32,49 @@ public class CurrRatesReader {
      */
     public static List<CurrRate> loadRatesFromFile(String currency, Date rateDateTo, int numRecentRates) {
         List<CurrRate> listCurrRate = new LinkedList<>();
+        String sFileName = currency.toUpperCase() + ".csv";
 
-        Reader reader = new InputStreamReader(getFileFromResourceAsStream(currency.toUpperCase() + ".csv"), Charset.forName("windows-1251"));
+        Reader reader = new InputStreamReader(getFileFromResourceAsStream(sFileName), Charset.forName("windows-1251"));
 
-        try (CSVParser csvParser = new CSVParser(reader, buildCSVFormat("nominal;date;rate;cdx", ";", "\r\n", true, '"'));) {
+        try (CSVParser csvParser = new CSVParser(reader, buildCSVFormat())) {
             List<CSVRecord> csvRecords = csvParser.getRecords();
 
             csvRecords.sort(new CsvRecordComparator());
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
-
             for (CSVRecord csvRecord : csvRecords) {
                 //достаточное ли количество курсов для прогнозирования
-                if (isEnoughRatesForForecast(listCurrRate.size(), numRecentRates)){
+                if (isEnoughRatesForForecast(listCurrRate.size(), numRecentRates)) {
                     break;
                 }
 
-                Date rateDate = dateFormatter.parse(csvRecord.get("date"));
+                CurrRate currRate= newCurrRate(csvRecord);
 
                 //Отбираем курсы валют с датой не больше даты начала прогноза
-                if (useCurrRateForForecast(rateDate, rateDateTo)) {
-                    listCurrRate.add(
-                            new CurrRate(
-                                    Double.parseDouble(csvRecord.get("nominal").replace(",", ".").replace(" ", "")),
-                                    Double.parseDouble(csvRecord.get("rate").replace(",", ".").replace(" ", "")),
-                                    rateDate,
-                                    csvRecord.get("cdx")));
+                if (useCurrRateForForecast(currRate.getRateDate(), rateDateTo)) {
+                    listCurrRate.add(newCurrRate(csvRecord));
                 }
             }
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
+            System.out.println("Could not find file " + sFileName);
             throw new RuntimeException(e.getMessage(), e);
         }
 
         return listCurrRate;
     }
 
-    private static CSVFormat buildCSVFormat(String header, String delimitter, String recordSeparator, boolean skipHeaderRecord, char quote) {
+    private static CSVFormat buildCSVFormat() {
+        final boolean skipHeaderRecord = true;
+        final String header = "nominal;date;rate;cdx";
+        final String delim = ";";
+        final String recordSeparator = "\n";
+        final char quote = '"';
+        final boolean allowMissingColumnNames = true;
+
         return CSVFormat.Builder.create()
                 .setSkipHeaderRecord(skipHeaderRecord)
-                .setHeader(header.split(";"))
-                .setAllowMissingColumnNames(true)
-                .setDelimiter(delimitter)
+                .setHeader(header.split(delim))
+                .setAllowMissingColumnNames(allowMissingColumnNames)
+                .setDelimiter(delim)
                 .setRecordSeparator(recordSeparator)
                 .setQuote(quote)
                 .build();
@@ -87,6 +91,18 @@ public class CurrRatesReader {
         }
     }
 
+    private static CurrRate newCurrRate(CSVRecord csvRecord) {
+        try {
+            return new CurrRate(
+                    Double.parseDouble(csvRecord.get("nominal").replace(",", ".").replace(" ", "")),
+                    Double.parseDouble(csvRecord.get("rate").replace(",", ".").replace(" ", "")),
+                    dateFormatter.parse(csvRecord.get("date")),
+                    csvRecord.get("cdx"));
+        } catch (ParseException e) {
+            System.out.println("Invalid date format");
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
     private static boolean isEnoughRatesForForecast(int numCurrRate, int numRecentRates) {
         return (numCurrRate >= numRecentRates && numRecentRates >= 0);
     }
