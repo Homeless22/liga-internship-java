@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
+import static ru.liga.CommandOption.*;
+
 public class CurrRateApp {
 
     //количество последних курсов, которые используются для прогнозирования
@@ -26,9 +28,9 @@ public class CurrRateApp {
             return;
         }
         //
-        if (COMMAND_RATE.equals(cmdLineParser.getOptionValue(CommandOption.COMMAND))) {
-            String currency = cmdLineParser.getOptionValue(CommandOption.CURRENCY);
-            String period = cmdLineParser.getOptionValue(CommandOption.PERIOD);
+        if (COMMAND_RATE.equals(cmdLineParser.getOptionValue(COMMAND))) {
+            String currency = cmdLineParser.getOptionValue(CURRENCY);
+            String period = cmdLineParser.getOptionValue(PERIOD);
 
             //загрузка исторических курсов валют из файла на текущую дату
             List<CurrRate> histCurrRates = CurrRatesReader.loadRatesFromFile(currency, new Date(), MAX_NUM_RECENT_RATES);
@@ -42,7 +44,7 @@ public class CurrRateApp {
 
             //вывод курсов
             printCurrRates(forecastRates);
-        } else if (COMMAND_EXIT.equals(cmdLineParser.getOptionValue(CommandOption.COMMAND))) {
+        } else if (COMMAND_EXIT.equals(cmdLineParser.getOptionValue(COMMAND))) {
             System.exit(0);
         }
     }
@@ -52,6 +54,6 @@ public class CurrRateApp {
     }
 
     private static void printCurrRates(List<CurrRate> currRates) {
-        currRates.forEach(currRate -> printCurrRate(currRate));
+        currRates.forEach(CurrRateApp::printCurrRate);
     }
 }

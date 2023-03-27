@@ -1,28 +1,22 @@
 package ru.liga;
 
 public enum ForecastPeriod {
-    TOMORROW("tomorrow") {
-        @Override
-        public int getNumberOfDays() {
-            return 1;
-        }
-    },
-    WEEK("week") {
-        @Override
-        public int getNumberOfDays() {
-            return 7;
-        }
-    };
+    TOMORROW("tomorrow", 1),
+    WEEK("week", 7) ;
 
-    private String period;
+    final private String period;
+    final private int numberOfDays;
 
-    private ForecastPeriod(String period) {
+    ForecastPeriod(String period, int numberOfDays) {
         this.period = period;
+        this.numberOfDays = numberOfDays;
     }
 
     public String getPeriod() {
         return period;
     }
 
-    public abstract int getNumberOfDays();
+    public int getNumberOfDays() {
+        return numberOfDays;
+    }
 }

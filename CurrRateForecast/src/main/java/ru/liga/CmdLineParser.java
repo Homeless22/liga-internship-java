@@ -3,6 +3,8 @@ package ru.liga;
 import java.util.HashMap;
 import java.util.Map;
 
+import static ru.liga.CommandOption.*;
+
 /*
 анализатор командной строки
 */
@@ -31,11 +33,11 @@ public class CmdLineParser {
         //проверка допустимости команды
         if (COMMAND_RATE.equalsIgnoreCase(arrOptions[0])) {
             retVal = true;
-            options.put(CommandOption.COMMAND, COMMAND_RATE);
+            options.put(COMMAND, COMMAND_RATE);
 
             //проверка заполнения параметры валюта
-            if (!"".equals(arrOptions[1])) {
-                options.put(CommandOption.CURRENCY, arrOptions[1]);
+            if (!arrOptions[1].isEmpty()) {
+                options.put(CURRENCY, arrOptions[1]);
             } else {
                 retVal = false;
             }
@@ -43,11 +45,11 @@ public class CmdLineParser {
             //проверка заполнения параметра период прогнозирования
             for (ForecastPeriod p:ForecastPeriod.values()){
                 if (p.getPeriod().equalsIgnoreCase(arrOptions[2])){
-                    options.put(CommandOption.PERIOD, p.name());
+                    options.put(PERIOD, p.name());
                     break;
                 }
             }
-            retVal = retVal && options.containsKey(CommandOption.PERIOD);
+            retVal = retVal && options.containsKey(PERIOD);
         }
         return retVal;
     }
