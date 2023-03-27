@@ -31,13 +31,16 @@ public class CurrRatesReader {
     public static List<CurrRate> loadRatesFromFile(String currency, Date rateDateTo, int numRecentRates) {
         List<CurrRate> listCurrRate = new LinkedList<>();
 
+        //todo можно вынести в метод и назвать по бизнесу
         Reader reader = new InputStreamReader(getFileFromResourceAsStream(currency.toUpperCase() + ".csv"), Charset.forName("windows-1251"));
 
+        //todo в "buildCSVFormat" всегда одинаковые параметры, лучше их убрать и вынести в константы
         try (CSVParser csvParser = new CSVParser(reader, buildCSVFormat("nominal;date;rate;cdx", ";", "\r\n", true, '"'));) {
             List<CSVRecord> csvRecords = csvParser.getRecords();
 
             csvRecords.sort(new CsvRecordComparator());
 
+            //todo лучше вынести в финальное поле класса
             SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy");
 
             for (CSVRecord csvRecord : csvRecords) {
@@ -51,6 +54,8 @@ public class CurrRatesReader {
                 //Отбираем курсы валют с датой не больше даты начала прогноза
                 if (useCurrRateForForecast(rateDate, rateDateTo)) {
                     listCurrRate.add(
+                            //todo лучше вынести в метод, сложно читать
+                            //можно использовать паттерн builder для создания объекта
                             new CurrRate(
                                     Double.parseDouble(csvRecord.get("nominal").replace(",", ".").replace(" ", "")),
                                     Double.parseDouble(csvRecord.get("rate").replace(",", ".").replace(" ", "")),
@@ -59,6 +64,7 @@ public class CurrRatesReader {
                 }
             }
         } catch (IOException | ParseException e) {
+            //todo надо вывести в консоль краткое инфо по ошибке
             throw new RuntimeException(e.getMessage(), e);
         }
 

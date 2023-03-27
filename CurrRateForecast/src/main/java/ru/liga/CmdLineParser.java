@@ -35,7 +35,7 @@ public class CmdLineParser {
             //проверка заполнения параметры валюта
             if (!"".equals(options[1])) {
                 commandOptions.put("currency", options[1]);
-            }
+            }//todo else лучше не переносить на след строку, } else {
             else {
                 retVal = false;
             }

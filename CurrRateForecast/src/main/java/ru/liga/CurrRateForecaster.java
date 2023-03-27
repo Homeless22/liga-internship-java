@@ -23,6 +23,7 @@ public class CurrRateForecaster {
         //отбор предыдущих курсов на дату refDate
         Date forecastDate = nextDate(refDate);
 
+        //todo опечатка
         int numForecatRates = getNumForecatRatesForPeriod(period);
 
         for (int i = 0; i < numForecatRates; i++) {
@@ -61,6 +62,7 @@ public class CurrRateForecaster {
 
     private static int getNumForecatRatesForPeriod(String period) {
         int retVal = 0;
+        //todo tomorrow и week лучше вынести в константы
         if ("tomorrow".equals(period)) {
             retVal = 1;
         } else if ("week".equals(period)) {
