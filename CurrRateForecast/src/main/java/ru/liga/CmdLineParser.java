@@ -31,9 +31,11 @@ public class CmdLineParser {
         //проверка допустимости команды
         if (COMMAND_RATE.equalsIgnoreCase(arrOptions[0])) {
             retVal = true;
+            //todo "CommandOption.COMMAND" можно заменить на COMMAND, будет просто компактнее
             options.put(CommandOption.COMMAND, COMMAND_RATE);
 
             //проверка заполнения параметры валюта
+            //todo если надо проверить пустая ли строка, лучше использовать метод String.isEmpty()
             if (!"".equals(arrOptions[1])) {
                 options.put(CommandOption.CURRENCY, arrOptions[1]);
             } else {

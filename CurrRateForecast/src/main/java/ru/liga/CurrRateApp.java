@@ -52,6 +52,8 @@ public class CurrRateApp {
     }
 
     private static void printCurrRates(List<CurrRate> currRates) {
+        //todo можно заменить лямбдой:
+        // "currRate -> printCurrRate(currRate)"  на "CurrRateApp::printCurrRate"
         currRates.forEach(currRate -> printCurrRate(currRate));
     }
 }

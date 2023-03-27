@@ -11,6 +11,7 @@ class CsvRecordComparator implements Comparator<CSVRecord> {
 
     public int compare(CSVRecord r1, CSVRecord r2) {
         try {
+            //todo "date" тоже хорошо бы вынести в константу
             return dateFormatter.parse(r1.get("date")).compareTo(dateFormatter.parse(r2.get("date"))) * -1;
         } catch (ParseException e) {
             System.out.println("invalid date format");
